@@ -1,0 +1,53 @@
+# 常用 WSL 命令
+# 命令	功能说明
+wsl --list --online				# 查看可安装的 Linux 发行版列表
+wsl --list --installed			# 查看已安装的发行版
+wsl --list --verbose			# 列出已安装的发行版
+wsl --set-version <Distro> 2	# 将指定发行版设置为使用 WSL2
+wsl --set-default-version 2		# 将默认 WSL 版本设置为 WSL2
+wsl -d <Distro>					# 启动指定的 Linux 发行版
+wsl --update					# 更新 WSL 内核
+wsl --unregister Ubuntu			# 销毁 会完全清除该 Linux 发行版的文件系统和数据
+wsl --install -d Ubuntu --name Ubuntu2	# 安装多个可以指定不同名称
+-- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- 
+# 一键安装 WSL（自动安装 Ubuntu 最新 LTS）
+wsl --install
+-- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- 
+# 安装特定版本的 Linux（例如 Ubuntu 20.04）
+wsl --install -d Ubuntu-20.04
+-- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- 
+#镜像下载 设置目录
+https://cloud-images.ubuntu.com/wsl/  
+-- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- 
+mkdir D:\WSL\Ubuntu-AUI		
+mkdir D:\WSL\Ubuntu-LLM
+mkdir D:\WSL\Ubuntu-OLM
+-- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- 
+#指定目录安装
+wsl --import Ubuntu-AUI D:\WSL\Ubuntu-AUI D:\WSL\ubuntu-jammy-wsl-amd64-ubuntu22.04lts.rootfs.tar.gz --version 2
+wsl --import Ubuntu-LLM D:\WSL\Ubuntu-LLM D:\WSL\ubuntu-jammy-wsl-amd64-ubuntu22.04lts.rootfs.tar.gz --version 2
+wsl --import Ubuntu-OLM D:\WSL\Ubuntu-OLM D:\WSL\ubuntu-jammy-wsl-amd64-ubuntu22.04lts.rootfs.tar.gz --version 2
+-- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- 
+#启动
+wsl -d Ubuntu-AUI
+wsl -d Ubuntu-LLM
+wsl -d Ubuntu-OLM
+-- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- 
+#安装工具脚本
+unzip WSL-AI-Deploy-AllInOne.zip
+cd wsl-ai-deploy-tool-v2
+chmod +x wsl-ultimate-deploy.sh
+bash wsl-ultimate-deploy.sh
+-- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- 
+# 设置密码
+passwd
+-- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- 
+# 设置主机名
+sudo hostnamectl set-hostname ubuntu
+-- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- 
+# 更新系统
+apt update && apt upgrade -y
+-- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- 
+# 安装常用工具
+apt install -y curl wget gnupg lsb-release sudo net-tools vim
+-- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- 
