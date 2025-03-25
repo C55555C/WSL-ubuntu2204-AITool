@@ -9,7 +9,6 @@
 ## 📦 使用方式
 
 ```bash
-git clone https://github.com/your/repo.git
 cd wsl-ultimate-deploy
 bash wsl-ultimate-deploy.sh
 ```
@@ -33,7 +32,6 @@ A modular AI deployment terminal script for WSL Ubuntu users on Windows. Support
 ## 📦 How to Use
 
 ```bash
-git clone https://github.com/your/repo.git
 cd wsl-ultimate-deploy
 bash wsl-ultimate-deploy.sh
 ```
