@@ -2,10 +2,10 @@
 clear
 source ./scripts/common.sh
 
-info "===== WSL AI 部署工具 ====="
+print_info "===== WSL AI 部署工具 ====="
 
-# 系统管理模块（预留拓展）
-echo "系统管理:" 
+# 系统管理模块
+print_info "系统管理:" 
 echo " 1. 系统信息查询"
 echo " 2. 更新系统软件"
 echo " 3. 安装基础组件"
@@ -16,8 +16,8 @@ echo " 7. 端口检查/设置"
 echo " 8. 进程检查/设置"
 echo " 9. 自启动设置"
 
-# Docker 管理模块（预留拓展）
-echo "Docker 管理:"
+# Docker 管理模块
+print_info "Docker 管理:"
 echo " 10. 安装更新环境"
 echo " 11. 查看全局状态"
 echo " 12. 容器管理"
@@ -29,7 +29,7 @@ echo " 17. 清理无用资源"
 echo " 18. 卸载 Docker"
 
 # Tailscale 模块
-info "Tailscale 管理:"
+print_info "Tailscale 管理:"
 echo " 19. 安装部署"
 echo " 20. 登录账号"
 echo " 21. 解除冲突占用"
@@ -40,7 +40,7 @@ echo " 25. 运行状态检查"
 echo " 26. 卸载 Tailscale"
 
 # Ollama 模型模块
-info "Ollama 管理:"
+print_info "Ollama 管理:"
 echo " 27. 安装部署"
 echo " 28. 安装模型"
 echo " 29. 启动服务"
@@ -49,7 +49,7 @@ echo " 31. 运行状态检查"
 echo " 32. 卸载 Ollama"
 
 # AnythingLLM 模块
-info "AnythingLLM 管理:"
+print_info "AnythingLLM 管理:"
 echo " 33. 安装部署"
 echo " 34. 配置 .env 环境变量"
 echo " 35. 启动服务"
@@ -57,7 +57,7 @@ echo " 36. 运行状态检查"
 echo " 37. 卸载 AnythingLLM"
 
 # Open WebUI 模块
-info "Open WebUI 管理:"
+print_info "Open WebUI 管理:"
 echo " 38. 安装部署"
 echo " 39. 启动服务"
 echo " 40. 运行状态检查"
