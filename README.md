@@ -42,12 +42,17 @@ mkdir D:\WSL\Ubuntu
 wsl --import Ubuntu D:\WSL\Ubuntu D:\WSL\ubuntu-jammy-wsl-amd64-ubuntu22.04lts.rootfs.tar.gz --version 2
 -- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- 
 ## 安装 WSL-ubuntu2204-AITool 工具脚本
-
-unzip WSL-AI-Deploy-AllInOne.zip
-cd wsl-ai-deploy-tool-v2
+首次使用前建议操作
 chmod +x wsl-ultimate-deploy.sh
-bash wsl-ultimate-deploy.sh
+chmod +x scripts/**/*.sh
 
+你也可以添加别名到 .bashrc
+echo "alias ai-deploy='bash ~/WSL-ubuntu2204-AITool/wsl-ultimate-deploy.sh'" >> ~/.bashrc
+source ~/.bashrc
+
+以后只需输入
+ai-deploy
+即可进入你的部署控制台
 
 ## 包含内容
 - wsl-ultimate-deploy.sh 主控菜单脚本（含完整 case 结构 1-41）
