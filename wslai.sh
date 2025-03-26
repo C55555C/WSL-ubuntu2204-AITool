@@ -2,6 +2,7 @@
 set -e
 
 echo "🚀 正在克隆 wsl-ai-launcher 项目..."
+rm -rf ~/wsl-ai-launcher
 git clone https://github.com/C55555C/wsl-ai-launcher.git
 cd wsl-ai-launcher
 
