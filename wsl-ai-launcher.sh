@@ -89,26 +89,8 @@ app_menu() {
   done
 }
 
-# === 子模块菜单函数 (占位) ===
-tailscale_menu() {
-  echo "📡 Tailscale 管理功能待开发..."
-  read -p "按回车返回"
-}
-
-openwebui_menu() {
-  echo "🌐 Open WebUI 管理功能待开发..."
-  read -p "按回车返回"
-}
-
-ollama_menu() {
-  echo "🦙 Ollama 管理功能待开发..."
-  read -p "按回车返回"
-}
-
-anythingllm_menu() {
-  echo "📚 AnythingLLM 管理功能待开发..."
-  read -p "按回车返回"
-}
+# ==== 启动入口 ====
+main_menu
 
 # === 系统管理占位函数 ===
 show_sysinfo() {
