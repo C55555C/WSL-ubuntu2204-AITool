@@ -1,0 +1,36 @@
+#!/bin/bash
+
+submenu_tailscale() {
+  while true; do
+    clear
+    echo "===== 📡 Tailscale 管理 ====="
+    echo " 1. 检查更新"
+    echo " 2. 登录状态"
+    echo " 3. 查看网络 (ifconfig)"
+    echo " 4. 查看公网映射 (Funnel)"
+    echo " 5. tailscale 状态"
+    echo " 99. 卸载"
+    echo " 0. 返回"
+    echo ""
+    read -p "请选择操作编号: " choice
+    case "$choice" in
+      1) docker exec -it tailscale tailscale version; read -p "按回车继续..." ;;
+      2) docker exec -it tailscale tailscale status; read -p "按回车继续..." ;;
+      3) ifconfig; read -p "按回车继续..." ;;
+      4) docker exec -it tailscale tailscale funnel list; read -p "按回车继续..." ;;
+      5) docker exec -it tailscale tailscale status; read -p "按回车继续..." ;;
+      99)
+        read -p "⚠️ 确认要卸载 tailscale 吗？(y/n): " confirm
+        if [[ "$confirm" == "y" ]]; then
+          docker rm -f tailscale && rm -rf ~/tailscale-docker
+          echo "✅ 已卸载 tailscale"
+        else
+          echo "❎ 已取消"
+        fi
+        read -p "按回车继续..."
+        ;;
+      0) break ;;
+      *) echo "❌ 无效选项"; read ;;
+    esac
+  done
+}
