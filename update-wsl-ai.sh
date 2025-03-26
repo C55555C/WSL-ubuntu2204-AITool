@@ -1,48 +1,39 @@
 #!/bin/bash
+
 set -e
 
-PROJECT_DIR="$HOME/wsl-ai-launcher"
 REPO_URL="https://github.com/C55555C/wsl-ai-launcher.git"
+REPO_DIR="$HOME/wsl-ai-launcher"
 
 echo "🔄 WSL AI 管理工具 - 一键更新"
 
-# Step 1: 如果不存在，先 clone
-if [ ! -d "$PROJECT_DIR/.git" ]; then
-  echo "📁 项目目录不存在，正在克隆..."
-  git clone "$REPO_URL" "$PROJECT_DIR"
+if [ ! -d "$REPO_DIR/.git" ]; then
+  echo "📁 未检测到本地仓库，正在克隆..."
+  git clone "$REPO_URL" "$REPO_DIR"
+  echo "✅ 克隆完成！"
+  exit 0
 fi
 
-cd "$PROJECT_DIR"
+cd "$REPO_DIR"
+echo "📁 项目目录存在，尝试拉取最新代码..."
 
-# Step 2: 检查当前分支
-CURRENT_BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null || echo "main")
-echo "🔎 当前分支: $CURRENT_BRANCH"
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+echo "🔎 当前分支: $BRANCH"
 
-# Step 3: 设置 upstream（如未设置）
-UPSTREAM=$(git rev-parse --abbrev-ref --symbolic-full-name "@{u}" 2>/dev/null || true)
-if [ -z "$UPSTREAM" ]; then
-  echo "🔧 设置远程跟踪: origin/$CURRENT_BRANCH"
-  git branch --set-upstream-to=origin/$CURRENT_BRANCH "$CURRENT_BRANCH"
+# 检查是否有未提交的改动
+if [ -n "$(git status --porcelain)" ]; then
+  echo "📦 检测到本地改动，自动保存到 stash..."
+  git stash push -m "auto-stash-before-update"
 fi
 
-# Step 4: 如果存在本地改动，先 stash
-if ! git diff --quiet || ! git diff --cached --quiet; then
-  echo "📥 检测到本地改动，自动保存到 stash..."
-  git stash push -m "Auto stash before update"
+# 拉取远程最新代码
+git pull origin "$BRANCH"
+echo "✅ 更新完成！"
+
+# 检查是否有 stash 可以恢复
+if git stash list | grep -q "auto-stash-before-update"; then
+  echo "♻️ 检测到先前保存的更改，正在恢复..."
+  git stash pop || true
 fi
 
-# Step 5: 拉取远程更新
-echo "⬇️ 正在拉取远程代码..."
-git pull
-
-# Step 6: 恢复本地修改（如果存在 stash）
-if git stash list | grep -q "Auto stash before update"; then
-  echo "♻️ 正在恢复之前的修改..."
-  git stash pop || echo "⚠️ 自动恢复时出现冲突，请手动处理"
-fi
-
-# Step 7: 启动主程序
-echo ""
-echo "🚀 启动 WSL AI 管理工具..."
-chmod +x wsl-ai-launcher.sh
-./wsl-ai-launcher.sh
+read -p "\n✅ 所有更新完成！按回车返回..."
