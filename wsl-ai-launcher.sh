@@ -163,11 +163,95 @@ update_system() {
   read -p "按回车返回主菜单..."
 }
 
-install_base()      { echo "🛠️ 安装基础组件（示意）..."; read -p "按回车返回"; }
-install_tools()     { echo "🔧 安装常用工具（示意）..."; read -p "按回车返回"; }
-set_username()      { echo "👤 设置用户名（示意）..."; read -p "按回车返回"; }
-set_password()      { echo "🔒 设置密码（示意）..."; read -p "按回车返回"; }
-gpu_info()          { echo "🎮 显卡信息："; nvidia-smi || echo "未检测到 NVIDIA 驱动"; read -p "按回车返回"; }
+install_base() {
+  clear
+  echo "===== ⚙️ 安装基础组件 ====="
+  echo ""
+
+  BASE_PACKAGES=(
+    curl wget git vim
+    build-essential lsb-release
+    net-tools dnsutils
+    zip unzip tar
+    software-properties-common
+    ca-certificates gnupg
+  )
+
+  echo "📦 将安装以下软件包："
+  echo "${BASE_PACKAGES[*]}"
+  echo ""
+
+  read -p "是否继续安装？(y/n): " confirm
+  if [[ "$confirm" != "y" ]]; then
+    echo "❌ 已取消安装"
+    read -p "按回车返回..."
+    return
+  fi
+
+  sudo apt update
+  sudo apt install -y "${BASE_PACKAGES[@]}"
+
+  echo ""
+  echo "✅ 基础组件安装完成！"
+  read -p "按回车返回主菜单..."
+}
+install_tools() {
+  clear
+  echo "===== 🔧 安装常用工具 ====="
+  TOOLS=(htop neofetch ncdu tmux tree jq)
+
+  echo "📦 将安装以下工具："
+  echo "${TOOLS[*]}"
+  echo ""
+  read -p "是否继续安装？(y/n): " confirm
+  [[ "$confirm" != "y" ]] && echo "❌ 已取消安装" && read -p "按回车返回..." && return
+
+  sudo apt update
+  sudo apt install -y "${TOOLS[@]}"
+  echo ""
+  echo "✅ 常用工具安装完成！"
+  read -p "按回车返回主菜单..."
+}
+set_username() {
+  clear
+  echo "===== 👤 设置新用户名 ====="
+  read -p "请输入新用户名: " new_user
+  if id "$new_user" >/dev/null 2>&1; then
+    echo "⚠️ 用户 $new_user 已存在"
+  else
+    sudo adduser "$new_user"
+    sudo usermod -aG sudo "$new_user"
+    echo "✅ 用户 $new_user 已创建并拥有 sudo 权限"
+  fi
+  read -p "按回车返回主菜单..."
+}
+set_password() {
+  clear
+  echo "===== 🔒 设置用户密码 ====="
+  echo ""
+  read -p "请输入要修改密码的用户名（当前用户为 $(whoami)）: " user
+  sudo passwd "$user"
+  echo ""
+  echo "✅ 密码设置完成（若无报错）"
+  read -p "按回车返回主菜单..."
+}
+gpu_info() {
+  clear
+  echo "===== 🎮 显卡信息 ====="
+  echo ""
+
+  if command -v nvidia-smi >/dev/null 2>&1; then
+    nvidia-smi
+  else
+    echo "⚠️ 未检测到 NVIDIA 驱动或未安装 nvidia-smi"
+    echo ""
+    echo "🧪 使用 lspci 检测显卡信息："
+    lspci | grep -i vga || echo "未找到 VGA 设备"
+  fi
+
+  echo ""
+  read -p "按回车返回主菜单..."
+}
 
 install_docker()        { echo "🐳 安装 Docker + NVIDIA 工具（待接入脚本）"; read -p "按回车返回"; }
 install_tailscale()     { echo "🟢 安装 Tailscale（待接入脚本）"; read -p "按回车返回"; }
