@@ -3,7 +3,12 @@ set -e
 
 echo "🐳 安装 Docker + NVIDIA 支持..."
 
-# === 0. 系统判断 ===
+read -p "⚠️ 确认要继续安装 Docker + NVIDIA 支持吗？(y/n): " confirm
+if [[ "$confirm" != "y" ]]; then
+  echo "❎ 已取消安装操作。"
+  exit 0
+fi
+
 . /etc/os-release
 version="${ID}${VERSION_ID}"
 echo "👥 当前系统版本: $version"
@@ -18,7 +23,6 @@ case "$version" in
     ;;
 esac
 
-# === 1. 基础依赖 ===
 echo "📆 安装基础依赖..."
 sudo apt update
 sudo apt install -y \
@@ -28,7 +32,6 @@ sudo apt install -y \
   lsb-release \
   software-properties-common
 
-# === 2. Docker 安装 ===
 echo "🔑 配置 Docker APT keyring..."
 sudo mkdir -p /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
@@ -45,7 +48,6 @@ echo "📆 安装 Docker 引擎..."
 sudo apt update
 sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
 
-# === 3. NVIDIA Container Toolkit ===
 echo "🔑 添加 NVIDIA GPG key..."
 sudo mkdir -p /etc/apt/keyrings
 curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | \
@@ -69,4 +71,4 @@ sudo systemctl restart docker || true
 echo "👤 将当前用户加入 docker 组..."
 sudo usermod -aG docker $USER
 
-echo "✅ 安装完成！请执行 'newgrp docker' 或重新登录终端以生效组权限。
+echo "✅ 安装完成！请执行 'newgrp docker' 或重新登录终端以生效组权限。"
