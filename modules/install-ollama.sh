@@ -4,7 +4,7 @@ set -e
 INSTALL_DIR="/usr/local/bin"
 SERVICE_FILE="/etc/systemd/system/ollama.service"
 
-echo "🧃 正在部署 Ollama 本地大模型服务"
+echo "🦙 正在部署 Ollama 本地大模型服务"
 read -p "⚠️ 确认要安装 Ollama 吗？(y/n): " confirm
 if [[ "$confirm" != "y" ]]; then
   echo "❎ 已取消 Ollama 安装"
