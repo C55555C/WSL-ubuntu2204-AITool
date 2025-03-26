@@ -2,7 +2,7 @@
 
 CONFIG_FILE="$HOME/.wsl-ai-config"
 
-# === 初始化：首次启动提示 ===
+# ==== 第一次启动提示设置快捷键 ====
 if [ ! -f "$CONFIG_FILE" ]; then
   echo "=============================="
   echo "🟡 第一次运行检测到"
@@ -13,7 +13,6 @@ if [ ! -f "$CONFIG_FILE" ]; then
   echo "first_run=false" > "$CONFIG_FILE"
 fi
 
-# === 快捷键设置函数 ===
 set_start_shortcut() {
   echo "🎯 当前未设置快捷键，请输入你希望的快捷键组合（例如 ctrl+alt+a）："
   read -p "请输入快捷键：" shortcut
@@ -21,7 +20,7 @@ set_start_shortcut() {
   echo "✅ 快捷键设置完成：$shortcut"
 }
 
-# === 主菜单 ===
+# ==== 主菜单 ====
 main_menu() {
   while true; do
     clear
@@ -42,14 +41,14 @@ main_menu() {
     echo ""
     read -p "请选择操作编号: " choice
     case "$choice" in
-      1) show_sysinfo ;;
-      2) update_system ;;
-      3) install_base ;;
-      4) install_tools ;;
-      5) set_username ;;
-      6) set_password ;;
+      1) source modules/sysinfo.sh && show_sysinfo ;;
+      2) source modules/update.sh && update_system ;;
+      3) source modules/base.sh && install_base ;;
+      4) source modules/tools.sh && install_tools ;;
+      5) source modules/username.sh && set_username ;;
+      6) source modules/password.sh && set_password ;;
       7) app_menu ;;
-      8) gpu_info ;;
+      8) source modules/gpu.sh && gpu_info ;;
       99) set_start_shortcut ;;
       0) exit 0 ;;
       *) echo "❌ 无效选择，按回车重试..." && read ;;
@@ -57,7 +56,7 @@ main_menu() {
   done
 }
 
-# === 应用管理菜单 ===
+# ==== 应用管理菜单 ====
 app_menu() {
   while true; do
     clear
@@ -75,15 +74,15 @@ app_menu() {
     echo ""
     read -p "请选择操作编号: " choice
     case "$choice" in
-      1) install_docker ;;
-      2) install_tailscale ;;
-      3) install_openwebui ;;
-      4) install_ollama ;;
-      5) install_anythingllm ;;
-      6) tailscale_menu ;;
-      7) openwebui_menu ;;
-      8) ollama_menu ;;
-      9) anythingllm_menu ;;
+      1) source modules/install-docker-nvidia.sh && install_docker_nvidia ;;
+      2) echo "🟢 安装 Tailscale（待接入）" && read ;;
+      3) echo "🌐 安装 OpenWebUI（待接入）" && read ;;
+      4) echo "🦙 安装 Ollama（待接入）" && read ;;
+      5) echo "📚 安装 AnythingLLM（待接入）" && read ;;
+      6) echo "📡 Tailscale 管理（待接入）" && read ;;
+      7) echo "🌐 OpenWebUI 管理（待接入）" && read ;;
+      8) echo "🦙 Ollama 管理（待接入）" && read ;;
+      9) echo "📚 AnythingLLM 管理（待接入）" && read ;;
       0) break ;;
       *) echo "❌ 无效选择，按回车重试..." && read ;;
     esac
@@ -145,16 +144,16 @@ update_system() {
   clear
   echo "===== 📦 更新系统 ====="
   echo ""
+  echo "将执行以下操作："
+  echo " 1. sudo apt update"
+  echo " 2. sudo apt upgrade -y"
+  echo " 3. sudo apt autoremove -y && sudo apt clean"
+  echo ""
+  read -p "是否继续？(y/n): " confirm
+  [[ "$confirm" != "y" ]] && echo "❎ 已取消操作" && read -p "按回车返回..." && return
 
-  echo "📥 更新软件包列表..."
   sudo apt update
-
-  echo ""
-  echo "🛠️  升级已安装的软件..."
   sudo apt upgrade -y
-
-  echo ""
-  echo "🧹 清理旧的包和缓存..."
   sudo apt autoremove -y
   sudo apt clean
 
@@ -162,6 +161,7 @@ update_system() {
   echo "✅ 系统更新完成！"
   read -p "按回车返回主菜单..."
 }
+
 
 install_base() {
   clear
@@ -177,16 +177,11 @@ install_base() {
     ca-certificates gnupg
   )
 
-  echo "📦 将安装以下软件包："
+  echo "将安装以下软件包："
   echo "${BASE_PACKAGES[*]}"
   echo ""
-
   read -p "是否继续安装？(y/n): " confirm
-  if [[ "$confirm" != "y" ]]; then
-    echo "❌ 已取消安装"
-    read -p "按回车返回..."
-    return
-  fi
+  [[ "$confirm" != "y" ]] && echo "❎ 已取消安装" && read -p "按回车返回..." && return
 
   sudo apt update
   sudo apt install -y "${BASE_PACKAGES[@]}"
@@ -195,16 +190,17 @@ install_base() {
   echo "✅ 基础组件安装完成！"
   read -p "按回车返回主菜单..."
 }
+
 install_tools() {
   clear
   echo "===== 🔧 安装常用工具 ====="
   TOOLS=(htop neofetch ncdu tmux tree jq)
 
-  echo "📦 将安装以下工具："
+  echo "将安装以下工具："
   echo "${TOOLS[*]}"
   echo ""
   read -p "是否继续安装？(y/n): " confirm
-  [[ "$confirm" != "y" ]] && echo "❌ 已取消安装" && read -p "按回车返回..." && return
+  [[ "$confirm" != "y" ]] && echo "❎ 已取消安装" && read -p "按回车返回..." && return
 
   sudo apt update
   sudo apt install -y "${TOOLS[@]}"
@@ -212,6 +208,7 @@ install_tools() {
   echo "✅ 常用工具安装完成！"
   read -p "按回车返回主菜单..."
 }
+
 set_username() {
   clear
   echo "===== 👤 设置新用户名 ====="
@@ -239,12 +236,17 @@ set_password() {
   clear
   echo "===== 🔒 设置用户密码 ====="
   echo ""
+  echo "输入 q 可取消设置"
+  echo ""
   read -p "请输入要修改密码的用户名（当前用户为 $(whoami)）: " user
+  [[ "$user" == "q" || "$user" == "Q" ]] && echo "❎ 已取消操作" && read -p "按回车返回..." && return
+
   sudo passwd "$user"
   echo ""
-  echo "✅ 密码设置完成（若无报错）"
+  echo "✅ 密码设置完成（如无报错）"
   read -p "按回车返回主菜单..."
 }
+
 gpu_info() {
   clear
   echo "===== 🎮 显卡信息 ====="
