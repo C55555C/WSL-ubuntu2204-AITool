@@ -141,7 +141,28 @@ show_sysinfo() {
   read -p "按回车返回主菜单..."
 }
 
-update_system()     { echo "📦 系统更新中（示意）..."; sudo apt update && sudo apt upgrade -y; read -p "按回车返回"; }
+update_system() {
+  clear
+  echo "===== 📦 更新系统 ====="
+  echo ""
+
+  echo "📥 更新软件包列表..."
+  sudo apt update
+
+  echo ""
+  echo "🛠️  升级已安装的软件..."
+  sudo apt upgrade -y
+
+  echo ""
+  echo "🧹 清理旧的包和缓存..."
+  sudo apt autoremove -y
+  sudo apt clean
+
+  echo ""
+  echo "✅ 系统更新完成！"
+  read -p "按回车返回主菜单..."
+}
+
 install_base()      { echo "🛠️ 安装基础组件（示意）..."; read -p "按回车返回"; }
 install_tools()     { echo "🔧 安装常用工具（示意）..."; read -p "按回车返回"; }
 set_username()      { echo "👤 设置用户名（示意）..."; read -p "按回车返回"; }
