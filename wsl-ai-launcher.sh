@@ -24,6 +24,7 @@ main_menu() {
     echo " 5. 设置用户名"
     echo " 6. 设置密码"
     echo " 7. 显卡信息"
+    echo " 8. 更新本工具（GitHub 最新）"
     echo ""
     echo "应用管理:"
     echo " 11. 安装 Docker + NVIDIA"
@@ -49,6 +50,7 @@ main_menu() {
       5)  set_username ;;
       6)  set_password ;;
       7)  show_gpu_info ;;
+      8)  bash update-wsl-ai.sh ;;
 
       11) bash modules/install-docker-nvidia.sh ;;
       12) bash modules/install-tailscale.sh ;;
