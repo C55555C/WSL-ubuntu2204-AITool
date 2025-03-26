@@ -72,14 +72,14 @@ app_menu() {
     read -p "请选择操作编号: " choice
     case "$choice" in
       1) source modules/install-docker-nvidia.sh; install_docker_nvidia ;;
-      2) echo "🟢 安装 Tailscale（待接入）"; read ;;
-      3) echo "🌐 安装 OpenWebUI（待接入）"; read ;;
-      4) echo "🦙 安装 Ollama（待接入）"; read ;;
-      5) echo "📚 安装 AnythingLLM（待接入）"; read ;;
-      6) echo "📡 Tailscale 管理（待接入）"; read ;;
-      7) echo "🌐 OpenWebUI 管理（待接入）"; read ;;
-      8) echo "🦙 Ollama 管理（待接入）"; read ;;
-      9) echo "📚 AnythingLLM 管理（待接入）"; read ;;
+      2) source modules/install-tailscale.sh; install_tailscale ;;
+      3) source modules/install-openwebui.sh; install_openwebui ;;
+      4) source modules/install-ollama.sh; install_ollama ;;
+      5) source modules/install-anythingllm.sh; install_anythingllm ;;
+      6) source modules/menu-tailscale.sh; submenu_tailscale ;;
+      7) source modules/menu-openwebui.sh; submenu_openwebui ;;
+      8) source modules/menu-ollama.sh; submenu_ollama ;;
+      9) source modules/menu-anythingllm.sh; submenu_anythingllm ;;
       0) break ;;
       *) echo "❌ 无效选择，按回车重试..."; read ;;
     esac
