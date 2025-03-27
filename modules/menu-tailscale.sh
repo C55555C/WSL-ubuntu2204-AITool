@@ -13,7 +13,7 @@ submenu_tailscale() {
     echo " 5. 启用 Funnel 公网映射"
     echo " 6. 关闭 Funnel 公网映射"
     echo " 7. API 联通性测试"
-    echo " 8. 进入容器交互终端"
+    echo " 8. 设置 Docker 容器名称"
     echo " 99. 卸载 Tailscale"
     echo " 0. 返回上级菜单"
     echo ""
@@ -68,12 +68,19 @@ submenu_tailscale() {
         fi
         read -p "按回车返回菜单..." ;;
       7)
-        read -p "请输入要测试的本地端口 (例如 11434): " test_port
+        read -p "请输入要测试的本地端口 (例如 3000): " test_port
         echo "📡 正在测试 API 接口连接（curl localhost:$test_port/api/tags）..."
         curl -s http://localhost:$test_port/api/tags && echo -e "\n✅ 接口正常" || echo -e "\n❌ 连接失败"
         read -p "按回车返回菜单..." ;;
       8)
-        docker exec -it $CONTAINER_NAME sh ;;
+        read -p "（当前容器名称：$CONTAINER_NAME）请输入更新: " new_name
+        if [[ -n "$new_name" ]]; then
+          CONTAINER_NAME="$new_name"
+          echo "✅ 容器名称已更新为: $CONTAINER_NAME"
+        else
+          echo "❌ 容器名称不能为空"
+        fi
+        read -p "按回车返回菜单..." ;;
       99)
         read -p "⚠️ 确认要卸载 Tailscale 吗？(y/n): " confirm
         if [[ "$confirm" == "y" ]]; then
