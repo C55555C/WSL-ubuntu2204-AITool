@@ -2,7 +2,6 @@
 
 submenu_tailscale() {
   CONTAINER_NAME="tailscale"
-  FUNNEL_PORT=11434  # 可修改为你的服务端口，例如 Ollama
 
   while true; do
     clear
@@ -36,16 +35,42 @@ submenu_tailscale() {
         echo "✅ 已注销登录"
         read -p "按回车返回菜单..." ;;
       5)
-        docker exec -it $CONTAINER_NAME tailscale funnel enable "$FUNNEL_PORT"
-        echo "✅ 已启用 funnel 映射端口：$FUNNEL_PORT"
+        read -p "请输入要公开的服务端口 (例如 11434): " funnel_port
+        read -p "请输入映射的公网路径前缀 (例如 /ollama): " funnel_path
+        if [[ -z "$funnel_port" || -z "$funnel_path" ]]; then
+          echo "❌ 端口或路径不能为空"
+        else
+          docker exec -it $CONTAINER_NAME tailscale funnel --set-path "$funnel_path" "$funnel_port"
+          if [ $? -eq 0 ]; then
+            echo "✅ 已启用 Funnel 公网映射：$funnel_path => $funnel_port"
+            docker exec -it $CONTAINER_NAME tailscale ip -4 | while read ip; do
+              echo "🌐 公网访问地址：https://$ip.ts.net$funnel_path"
+            done
+          else
+            echo "❌ 启用失败，请检查路径或端口是否已被占用"
+          fi
+        fi
         read -p "按回车返回菜单..." ;;
       6)
-        docker exec -it $CONTAINER_NAME tailscale funnel disable "$FUNNEL_PORT"
-        echo "✅ 已关闭 funnel 映射端口：$FUNNEL_PORT"
+        echo "📋 正在列出当前 Funnel 路径映射..."
+        docker exec -it $CONTAINER_NAME tailscale funnel list
+        read -p "请输入要关闭的路径 (例如 /ollama): " funnel_path
+        read -p "请输入对应的端口 (例如 11434): " funnel_port
+        if [[ -z "$funnel_path" || -z "$funnel_port" ]]; then
+          echo "❌ 路径或端口不能为空"
+        else
+          docker exec -it $CONTAINER_NAME tailscale funnel --set-path "$funnel_path" "$funnel_port" off
+          if [ $? -eq 0 ]; then
+            echo "✅ 已关闭 Funnel 映射：$funnel_path"
+          else
+            echo "❌ 关闭失败，请确认路径和端口是否正确"
+          fi
+        fi
         read -p "按回车返回菜单..." ;;
       7)
-        echo "📡 正在测试 API 接口连接（curl localhost:$FUNNEL_PORT/api/tags）..."
-        curl -s http://localhost:$FUNNEL_PORT/api/tags && echo -e "\n✅ 接口正常"
+        read -p "请输入要测试的本地端口 (例如 11434): " test_port
+        echo "📡 正在测试 API 接口连接（curl localhost:$test_port/api/tags）..."
+        curl -s http://localhost:$test_port/api/tags && echo -e "\n✅ 接口正常" || echo -e "\n❌ 连接失败"
         read -p "按回车返回菜单..." ;;
       8)
         docker exec -it $CONTAINER_NAME sh ;;
