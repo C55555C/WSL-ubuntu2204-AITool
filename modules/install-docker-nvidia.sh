@@ -71,4 +71,4 @@ sudo systemctl restart docker || true
 echo "👤 将当前用户加入 docker 组..."
 sudo usermod -aG docker $USER
 
-echo "✅ 安装完成！请执行 'newgrp docker' 或重新登录终端以生效组权限。"
+echo "✅ 安装完成！请执行 'newgrp docker' 或 'sudo reboo' 重新登录终端以生效组权限。"
