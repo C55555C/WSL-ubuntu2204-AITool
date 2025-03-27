@@ -1,9 +1,13 @@
 #!/bin/bash
 
 submenu_openwebui() {
+  CONTAINER_NAME="openwebui"
+  DATA_DIR="$HOME/openwebui-data"
+  IMAGE_NAME="ghcr.io/open-webui/open-webui:main"
+
   while true; do
     clear
-    echo "===== 🌐 Open WebUI 管理菜单 ====="
+    echo "===== 🌐 Open WebUI 管理菜单 (Docker) ====="
     echo " 1. 启动服务"
     echo " 2. 停止服务"
     echo " 3. 查看日志"
@@ -15,32 +19,45 @@ submenu_openwebui() {
     read -p "请选择操作编号: " choice
     case "$choice" in
       1)
-        docker start openwebui
+        if docker ps -a --format '{{.Names}}' | grep -q "^$CONTAINER_NAME$"; then
+          docker start "$CONTAINER_NAME"
+        else
+          echo "📦 正在首次运行 Open WebUI 容器..."
+          docker run -d \
+            --name "$CONTAINER_NAME" \
+            -p 3000:3000 \
+            -v "$DATA_DIR:/app/backend/data" \
+            "$IMAGE_NAME"
+        fi
         echo "✅ 已启动 Open WebUI"
-        read -p "\n按回车继续..." ;;
+        read -p "按回车继续..." ;;
       2)
-        docker stop openwebui
-        echo "✅ 已停止 Open WebUI"
-        read -p "\n按回车继续..." ;;
+        docker stop "$CONTAINER_NAME" && echo "✅ 已停止 Open WebUI"
+        read -p "按回车继续..." ;;
       3)
-        docker logs -f openwebui ;;
+        if docker ps -a --format '{{.Names}}' | grep -q "^$CONTAINER_NAME$"; then
+          docker logs -f "$CONTAINER_NAME"
+        else
+          echo "❌ 容器尚未创建，无法查看日志"
+          read -p "按回车继续..." 
+        fi ;;
       4)
-        docker restart openwebui
-        echo "✅ 已重启 Open WebUI"
-        read -p "\n按回车继续..." ;;
+        docker restart "$CONTAINER_NAME" && echo "✅ 已重启 Open WebUI"
+        read -p "按回车继续..." ;;
       5)
-        docker ps -a | grep openwebui
-        read -p "\n按回车继续..." ;;
+        docker ps -a | grep "$CONTAINER_NAME"
+        read -p "按回车继续..." ;;
       99)
-        read -p "⚠️ 确认卸载 Open WebUI 吗？(y/n): " confirm
+        read -p "⚠️ 确认要卸载 Open WebUI 吗？(y/n): " confirm
         if [[ "$confirm" == "y" ]]; then
-          docker rm -f openwebui
-          rm -rf ~/openwebui-data
+          docker rm -f "$CONTAINER_NAME"
+          docker rmi "$IMAGE_NAME"
+          rm -rf "$DATA_DIR"
           echo "✅ Open WebUI 已卸载"
         else
           echo "❎ 已取消卸载"
         fi
-        read -p "\n按回车继续..." ;;
+        read -p "按回车继续..." ;;
       0)
         break ;;
       *)
