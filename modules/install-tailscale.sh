@@ -8,6 +8,9 @@ if [[ "$confirm" != "y" ]]; then
   exit 0
 fi
 
+read -p "🆔 为此 Tailscale 实例命名容器（默认：tailscale）： " container_name
+TS_CONTAINER_NAME=${container_name:-tailscale}
+
 read -p "🔑 是否立即登陆 Tailscale？(y/n): " login_now
 if [[ "$login_now" == "y" ]]; then
   read -p "🌐 输入 auth-key：" TS_AUTHKEY
@@ -20,35 +23,35 @@ fi
 read -p "🔹 设置 SOCKS5 代理端口（默认 1077）：" input_port
 TS_SOCKS_PORT=${input_port:-1077}
 
-echo "📁 创建 tailscale 数据盘目录..."
-mkdir -p ~/tailscale-docker/data
+echo "📁 创建 tailscale 数据目录..."
+mkdir -p ~/tailscale-docker/$TS_CONTAINER_NAME/data
 
-echo "🛉 删除已有 tailscale 容器..."
-docker rm -f tailscale 2>/dev/null || true
-
-echo "🛠️ 启动 Tailscale 容器..."
-docker run -d \
-  --name tailscale \
-  --restart unless-stopped \
-  --network=host \
-  --cap-add=NET_ADMIN \
-  -v ~/tailscale-docker/data:/var/lib/tailscale \
-  tailscale/tailscale \
-  tailscaled --tun=userspace-networking --socks5-server=localhost:$TS_SOCKS_PORT
-
-sleep 2
+if docker ps -a --format '{{.Names}}' | grep -qw "$TS_CONTAINER_NAME"; then
+  echo "⚠️ 容器 [$TS_CONTAINER_NAME] 已存在，跳过创建"
+else
+  echo "🛠️ 启动 Tailscale 容器 [$TS_CONTAINER_NAME]..."
+  docker run -d \
+    --name "$TS_CONTAINER_NAME" \
+    --restart unless-stopped \
+    --network=host \
+    --cap-add=NET_ADMIN \
+    -v ~/tailscale-docker/$TS_CONTAINER_NAME/data:/var/lib/tailscale \
+    tailscale/tailscale \
+    tailscaled --tun=userspace-networking --socks5-server=localhost:$TS_SOCKS_PORT
+  sleep 2
+fi
 
 if [[ -n "$TS_AUTHKEY" && -n "$TS_HOSTNAME" ]]; then
   echo "🔐 登陆 Tailscale 网络..."
-  docker exec -it tailscale tailscale up --authkey="$TS_AUTHKEY" --hostname="$TS_HOSTNAME"
+  docker exec -it "$TS_CONTAINER_NAME" tailscale up --authkey="$TS_AUTHKEY" --hostname="$TS_HOSTNAME"
 else
   echo "⚠️ 未执行 login，可后续手动登陆："
-  echo "docker exec -it tailscale tailscale up --authkey=xxx --hostname=yourhost"
+  echo "docker exec -it $TS_CONTAINER_NAME tailscale up --authkey=xxx --hostname=yourhost"
 fi
 
 echo ""
 echo "🔹 当前 tailscale 状态："
-docker exec -it tailscale tailscale status
+docker exec -it "$TS_CONTAINER_NAME" tailscale status
 
 echo ""
 echo "🌐 SOCKS5 代理 (127.0.0.1:$TS_SOCKS_PORT) 已启动！"
