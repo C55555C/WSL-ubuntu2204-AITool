@@ -1,5 +1,3 @@
-#!/bin/bash
-
 submenu_ollama() {
   while true; do
     clear
@@ -8,11 +6,11 @@ submenu_ollama() {
     echo " 2. 启动容器"
     echo " 3. 停止容器"
     echo " 4. 拉取模型"
-    echo " 5. 删除所有模型"
+    echo " 5. 删除释放模型"
     echo " 6. 查看接口状态"
     echo " 7. 查看日志"
-    echo " 8. 启动指定模型（加载进内存）"
-    echo " 9. 关闭模型（释放内存）"
+    echo " 8. 加载模型内存"
+    echo " 9. 释放模型缓存"
     echo " 99. 卸载 Ollama（Docker）"
     echo " 0. 返回上级菜单"
     echo ""
@@ -37,8 +35,12 @@ submenu_ollama() {
         curl -X POST http://localhost:11434/api/pull -d "{\"name\": \"$model\"}"
         read -p "按回车继续..." ;;
       5)
-        docker exec ollama ollama rm -a
-        echo "✅ 已删除所有模型"
+        echo "📦 已加载模型列表："
+        curl -s http://localhost:11434/api/tags | jq
+        echo -e "\n输入你要删除的模型名："
+        read model
+        curl -X DELETE http://localhost:11434/api/delete -d "{\"name\": \"$model\"}"
+        echo "✅ 模型 '$model' 已请求删除（请手动清理残留文件以释放磁盘空间）"
         read -p "按回车继续..." ;;
       6)
         curl http://localhost:11434/api/tags && echo "✅ 接口可访问"
@@ -49,16 +51,16 @@ submenu_ollama() {
         echo "📦 当前已安装模型："
         curl -s http://localhost:11434/api/tags | jq -r '.models[].name'
         echo ""
-        read -p "请输入要启动的模型名称: " model
+        read -p "请输入要加载到内存的模型名称: " model
         echo "🧠 正在加载模型到内存..."
         curl -s http://localhost:11434/api/generate -d "{\"model\":\"$model\",\"prompt\":\"Hello\"}" | jq
         echo "✅ 模型 '$model' 已尝试加载"
         read -p "按回车继续..." ;;
       9)
         echo "⚠️ 当前没有明确 API 可用于关闭模型。"
-        read -p "是否要通过重启容器来释放模型内存？(y/n): " confirm
+        read -p "是否要通过重启容器来释放模型缓存？(y/n): " confirm
         if [[ "$confirm" == "y" ]]; then
-          docker restart ollama && echo "✅ 已重启容器并释放模型内存"
+          docker restart ollama && echo "✅ 已重启容器并释放模型缓存"
         else
           echo "❎ 已取消操作"
         fi
