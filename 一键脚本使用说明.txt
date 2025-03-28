@@ -1,0 +1,70 @@
+# 一键安装 WSL 安装完成后重启电脑 
+wsl --install
+-- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- --
+修改配置
+notepad $env:USERPROFILE\.wslconfig
+-- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- --
+[wsl2]
+memory=12GB  	# 分配给每个 WSL2 实例的最大内存（例如 12GB）
+processors=8	# 分配 CPU 核心数（例如 8）
+swap=2GB		# 分配的交换空间大小（例如 2GB，增强内存管理）
+-- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- --
+配置更新生效
+wsl --shutdown
+-- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- --
+#以管理员身份打开 PowerShell 复制下面指令快速安装脚本
+
+Set-ExecutionPolicy Bypass -Scope Process -Force
+.\Install-WSL-Ubuntu.ps1
+-- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- --
+启动进入
+wsl -d 主机名 -u 用户名
+-- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- 
+返回主目录后执行安装工具
+cd
+bash <(curl -sL https://raw.githubusercontent.com/C55555C/wsl-ai-launcher/main/wslai.sh)
+-- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- 
+Docker桌面版安装
+下载4.93.0版本以下的安装程序及汉化包.
+安装包： https://github.com/asxez/DockerDesktop-CN/releases
+汉化包：https://github.com/asxez/DockerDesktop-CN?tab=readme-ov-file
+安装Docker后不要启动，在Docker安装目录 C:\Program Files\Docker\Docker\frontend\resources
+找到app.asar文件，将汉化包的asar文件改名为app.asar后替换
+-- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- 
+Docker 设置  进入面板页面 
+设置 — 常规 — 使用基于WSL2的引擎 √开启
+设置 — 资源 — WSL集成 — 启用与我的默认 WSL 发行版的集成 √开启
+设置 — 资源 — WSL集成 — 启用与其他发行版的集成  √全部开启
+设置 — 资源 — 启用 GPU 支持 √开启
+-- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- 
+初步安装流程：
+更新系统 — 安装基础组件 — 安装常用工具 — 查看显卡信息 — 安装Docker + NVIDIA驱动开启GPU模式 ( 根据显卡实际情况开确定是否开启 GPU )
+-- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- 
+系统部署流程：
+安装Tailscale(安装前需要提前注册好账号，因为是使用Key进行快捷登录)
+安装ollama\AnythingLLM\Open WebUI  (如果有外网访问需求，LLM和WebUI不要安装在同一台主机，Tailscale的Funnel公网映射会出现冲突)
+-- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- 
+# 常用 WSL 命令 功能说明
+
+wsl --list --online				# 查看可安装的发行版
+wsl --list --installed			# 查看已安装的发行版
+wsl --list --verbose			# 列出已安装的发行版
+wsl --install					# 默认安装官方最新的Ubuntu发行版
+wsl --set-version <Distro> 2	# 将指定发行版设置为使用 WSL2
+wsl --set-default-version 2		# 将默认 WSL 版本设置为 WSL2
+wsl --install -d <Distro>		# 安装指定的发行版
+wsl -d <Distro>					# 启动指定的发行版
+wsl --update					# 更新 WSL 内核
+wsl --unregister <Distro>		# 销毁并完全清除该发行版的文件系统和数据
+-- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- 
+
+#镜像下载 设置目录
+https://cloud-images.ubuntu.com/wsl/  
+mkdir D:\WSL\Ubuntu2204	
+
+#指定目录安装
+wsl --import Ubuntu2204 D:\WSL\Ubuntu2204 D:\WSL\ubuntu-jammy-wsl-amd64-ubuntu22.04lts.rootfs.tar.gz --version 2
+-- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- 
+#启动
+wsl Ubuntu2204
+-- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- 
