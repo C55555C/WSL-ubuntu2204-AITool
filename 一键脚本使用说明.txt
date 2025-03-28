@@ -25,7 +25,7 @@ cd
 bash <(curl -sL https://raw.githubusercontent.com/C55555C/wsl-ai-launcher/main/wslai.sh)
 -- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- 
 Docker桌面版安装
-下载4.93.0版本以下的安装程序及汉化包.
+下载4.39.0版本以下的安装程序及汉化包，推荐 Docker-4.38-windows-x86
 安装包： https://github.com/asxez/DockerDesktop-CN/releases
 汉化包：https://github.com/asxez/DockerDesktop-CN?tab=readme-ov-file
 安装Docker后不要启动，在Docker安装目录 C:\Program Files\Docker\Docker\frontend\resources
@@ -43,6 +43,14 @@ Docker 设置  进入面板页面
 系统部署流程：
 安装Tailscale(安装前需要提前注册好账号，因为是使用Key进行快捷登录)
 安装ollama\AnythingLLM\Open WebUI  (如果有外网访问需求，LLM和WebUI不要安装在同一台主机，Tailscale的Funnel公网映射会出现冲突)
+
+推荐模型 懂的都懂：
+ollama pull nomic-embed-text  （具有大型标记上下文窗口的高性能开放嵌入模型）
+ollama run huihui_ai/deepseek-r1-abliterated  （使用 abliteration 创建的未经审查版本）
+ollama run taozhiyuai/llama-3-8b-lexi-uncensored:f16  （Lexi 未经审查，这使得该模型符合要求）
+ollama run llama2-uncensored  （由 George Sung 和 Jarrad Hope 制作的未经审查模型）
+ollama run huihui_ai/qwq-abliterated:32b  （千问Q（QwQ） 是一个专注于提高人工智能推理能力的实验研究模型未经审查版本）
+ollama run huihui_ai/llama3.2-abliterate  （Meta 的 Llama 3.2 尺寸较小，有 1B 和 3B 两种型号未经审查版本）
 -- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- 
 # 常用 WSL 命令 功能说明
 
@@ -60,6 +68,8 @@ wsl --unregister <Distro>		# 销毁并完全清除该发行版的文件系统和
 
 #镜像下载 设置目录
 https://cloud-images.ubuntu.com/wsl/  
+推荐使用 ubuntu22.04lts.rootfs.tar.gz
+
 mkdir D:\WSL\Ubuntu2204	
 
 #指定目录安装
